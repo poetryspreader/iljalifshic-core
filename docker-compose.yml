@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  api:
+    container_name: iljalifshic_api
+    hostname: api
+    image: php:8.1
+    volumes:
+      - .:/var/www:cached
+    ports:
+      - "80"
+    labels:
+      traefik.enable: true
+      traefik.name: api
+    environment:
+      - APP_ENV=dev
+      - APP_VERSION=dev
+    links:
+      - database
+
+  console:
+    container_name: iljalifshic_core_console
+    hostname: console
+    image: php:8.1
+    volumes:
+      - .:/var/www:cached
+    ports:
+      - 80
+    labels:
+      traefik.enable: false
+    environment:
+      - APP_ENV=dev
+      - APP_VERSION=dev
+    links:
+      - database
+  database:
+    image: mysql:8
+    container_name: iljalifshic_db
+    labels:
+      traefik.enable: false
+    volumes:
+      - .mysql_data:/var/lib/mysql
+    ports:
+      - 3310:3306
+    environment:
+      MYSQL_DATABASE: 'iljalifshic_db'
+      MYSQL_ROOT_PASSWORD: usability
+      MYSQL_PASSWORD: usability
+      MYSQL_USER: ilja
+
+networks:
+  default:
+    external:
+      name: iljalifshic
